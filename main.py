@@ -1,12 +1,12 @@
 import socket
+import os
 
 def get_response(path):
-    responses = {
-        "/": b"HTTP/1.1 200 OK\r\n\r\n"
-    }
+    # response = b"HTTP/1.1 404 Not Found\r\n\r\n"
+    base = os.path.basename(path)
+    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(base)}\r\n\r\n{base}".encode()
 
-    default_response = b"HTTP/1.1 404 Not Found\r\n\r\n"
-    return responses.get(path, default_response)
+    return response
 
 
 def process_request(client_socket):

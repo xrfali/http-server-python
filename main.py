@@ -1,5 +1,7 @@
 import socket
 import os
+import threading
+import time
 
 def get_response(path):
     # response = b"HTTP/1.1 404 Not Found\r\n\r\n"
@@ -10,6 +12,7 @@ def get_response(path):
 
 
 def process_request(client_socket):
+    
     #Read data from client
     r = client_socket.recv(1024)
     decoded_r = r.decode()
@@ -29,6 +32,13 @@ def process_request(client_socket):
     
     client_socket.close()
 
+def client_thread(client_socket, addr):
+    print(f"Connection from {addr} has been established.")
+
+    #Handles the client request
+    process_request(client_socket)
+
+
 def main():
     server_socket = socket.create_server(("localhost", 4221), reuse_port=True)
     server_socket.listen()
@@ -40,10 +50,7 @@ def main():
             print("Waiting for connection...")
             client_socket, addr = server_socket.accept()
 
-            print(f"Connection from {addr} has been established.")
-
-            #Handles the client request
-            process_request(client_socket)
+            threading.Thread(target=client_thread,args=(client_socket, addr)).start()
 
     except KeyboardInterrupt:
         print("\nServer is shutting down")

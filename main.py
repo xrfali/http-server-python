@@ -1,7 +1,15 @@
 import socket
 
-def process_request(client_socket):
+def get_response(path):
+    responses = {
+        "/": b"HTTP/1.1 200 OK\r\n\r\n"
+    }
 
+    default_response = b"HTTP/1.1 404 Not Found\r\n\r\n"
+    return responses.get(path, default_response)
+
+
+def process_request(client_socket):
     #Read data from client
     r = client_socket.recv(1024)
     decoded_r = r.decode()
@@ -9,13 +17,11 @@ def process_request(client_socket):
 
     r_entries = decoded_r.split('\r\n')
 
-    method, path, version = r_entries[0].split(' ')[1]
+    method, path, version = r_entries[0].split(' ')
 
-    if path == '/':
-        #Send a 200 OK response
-        client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
-    else:
-        client_socket.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
+    res = get_response(path)
+    client_socket.send(res)
+    
     client_socket.close()
 
 def main():

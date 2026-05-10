@@ -3,11 +3,18 @@ import socket
 def process_request(client_socket):
 
     #Read data from client
-    d = client_socket.recv(1024)
-    print(f"Received data: {d.decode()}")
+    r = client_socket.recv(1024)
+    decoded_r = r.decode()
+    print(f"\nReceived data: {decoded_r}\n")
 
-    #Send a 200 OK response
-    client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
+    r_entries = decoded_r.split('\r\n')
+
+    h = r_entries[0].split(' ')[1]
+    if h == '/':
+        #Send a 200 OK response
+        client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
+    else:
+        client_socket.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
     client_socket.close()
 
 def main():

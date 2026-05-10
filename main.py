@@ -4,6 +4,7 @@ def process_request(client_socket):
 
     #Read data from client
     d = client_socket.recv(1024)
+    print(f"Received data: {d.decode()}")
 
     #Send a 200 OK response
     client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")

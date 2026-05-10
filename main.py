@@ -3,10 +3,10 @@ import os
 import threading
 import sys
 
-def get_response(path):
+def get_response(path, code = '200 OK'):
     # response = b"HTTP/1.1 404 Not Found\r\n\r\n"
     
-    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(path)}\r\n\r\n{path}".encode()
+    response = f"HTTP/1.1 {code}\r\nContent-Type: text/plain\r\nContent-Length: {len(path)}\r\n\r\n{path}".encode()
 
     return response
 
@@ -17,8 +17,9 @@ def process_request(client_socket, file_dir = None):
     r = client_socket.recv(1024)
     decoded_r = r.decode()
     print(f"\nReceived data: {decoded_r}\n")
-
-    r_entries = decoded_r.split('\r\n')
+    header, request = decoded_r.split('\r\n\r\n')
+    r_entries = header.split('\r\n')
+    code = '200 OK'
 
     method, path, version = r_entries[0].split(' ')
     base = os.path.basename(path)
@@ -26,13 +27,19 @@ def process_request(client_socket, file_dir = None):
     if base == "user-agent":
         user_agent = r_entries[2]
         base = user_agent.split(':')[1].strip()
-    
-    if "files" in path:
-        cp = os.path.join(file_dir, base)
-        with open(cp, 'r') as f:
-            base = f.read()
 
-    res = get_response(base)
+    if "files" in path:
+        if method == 'POST':
+            cp = os.path.join(file_dir, base)
+            code = '201 Created'
+            with open(cp, 'w') as f:
+                f.write(request)
+        else:
+            cp = os.path.join(file_dir, base)
+            with open(cp, 'r') as f:
+                base = f.read()
+
+    res = get_response(base, code)
     client_socket.send(res)
     
     client_socket.close()

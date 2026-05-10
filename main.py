@@ -9,8 +9,9 @@ def process_request(client_socket):
 
     r_entries = decoded_r.split('\r\n')
 
-    h = r_entries[0].split(' ')[1]
-    if h == '/':
+    method, path, version = r_entries[0].split(' ')[1]
+
+    if path == '/':
         #Send a 200 OK response
         client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
     else:

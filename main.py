@@ -3,8 +3,8 @@ import os
 
 def get_response(path):
     # response = b"HTTP/1.1 404 Not Found\r\n\r\n"
-    base = os.path.basename(path)
-    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(base)}\r\n\r\n{base}".encode()
+    
+    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(path)}\r\n\r\n{path}".encode()
 
     return response
 
@@ -18,8 +18,13 @@ def process_request(client_socket):
     r_entries = decoded_r.split('\r\n')
 
     method, path, version = r_entries[0].split(' ')
+    base = os.path.basename(path)
 
-    res = get_response(path)
+    if base == "user-agent":
+        user_agent = r_entries[2]
+        base = user_agent.split(':')[1].strip()
+
+    res = get_response(base)
     client_socket.send(res)
     
     client_socket.close()

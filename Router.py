@@ -1,4 +1,4 @@
-import HTTPRequest
+import http_request
 import HttpResponse
 import os
 

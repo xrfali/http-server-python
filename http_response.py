@@ -1,5 +1,5 @@
 class HttpResponse():
-    def __init__(self, status, content_type, body):
+    def __init__(self, status, content_type = 'text/plain', body = ''):
         self.version = "HTTP/1.1"
         self.status = status
         self.content_type = content_type

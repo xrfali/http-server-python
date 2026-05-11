@@ -11,7 +11,7 @@ class HTTPRequest():
         header_except_line = headers.split('\r\n')[1:]
         self.headers = {}
         for header in header_except_line:
-            line = header.split(':')
+            line = header.split(':', 1)
             self.headers[line[0]] = line[1].strip()
         pass
 
@@ -20,9 +20,4 @@ class HTTPRequest():
         self.method = line[0]
         self.path = line[1]
         self.version = line[2]
-        pass
-    
-    
-    def parse_body(self, body):
-        
         pass

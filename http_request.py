@@ -1,11 +1,10 @@
 class HTTPRequest():
     def __init__(self, raw):
         
-        header, body = raw.split('\r\n\r\n')
+        self.header, self.body = raw.split('\r\n\r\n')
         
-        self.parse_headers(header)
-        self.parse_firstline(header.split('\r\n')[0])
-        self.parse_body(body)
+        self.parse_headers(self.header)
+        self.parse_firstline(self.header.split('\r\n')[0])
     
     def parse_headers(self, headers):
         header_except_line = headers.split('\r\n')[1:]

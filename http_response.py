@@ -13,4 +13,5 @@ class HttpResponse():
             response = f"{self.version} {self.status}\r\nContent-Type: {self.content_type}\r\nContent-Length: {len(self.body)}\r\n\r\n{self.body}".encode()
         
         client_socket.send(response)
+        client_socket.close()
         
